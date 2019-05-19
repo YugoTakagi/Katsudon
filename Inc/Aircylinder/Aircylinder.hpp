@@ -17,7 +17,7 @@ class Aircylinder
 public:
 	 void open();
 	 void close();
-	Aircylinder(unsigned char ID,CanBus *can):canbus(can),nodeID(ID)
+	Aircylinder(CanBus *can,unsigned char ID):canbus(can),nodeID(ID)
 	{
 
 	}

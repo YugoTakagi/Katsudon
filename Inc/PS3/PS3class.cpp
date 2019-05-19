@@ -120,12 +120,12 @@ void PS3controller::begin()
 		}
 		if(beginend)
 		{
-			ps3_msg.data=init_ok;
+
 		}
 		else
 		{
-			ps3_msg.data=init_error;
+
 		}
-		PS3BordState.publish(&ps3_msg);
+
 }
 

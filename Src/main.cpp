@@ -28,6 +28,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "LowlayerHandel.hpp"
+#include "InterruptIvent/TimerInterruptCallback.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,7 +99,7 @@ int main(void)
   plow=&hlow;
 
   Timer1 LoopInt(&htim6,10);
-  Timer1. Start();
+  LoopInt.Start();
   /* USER CODE END 2 */
 
   /* Infinite loop */

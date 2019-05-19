@@ -1,0 +1,2 @@
+RotaryEncoder.cpp:14:6:void Encoder::Sendreqest(long unsigned int)	0	static
+RotaryEncoder.cpp:19:7:float Encoder::GetDistance(float, float)	24	static

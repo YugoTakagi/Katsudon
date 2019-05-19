@@ -28,9 +28,8 @@ protected:
 public:
 	/*CAN communicate handle*/
 
-	CanBus extcan_d;
-	Canbus extcan_r;
-	Canbus stdcan_d;
+	CanBus extcan_d, extcan_r,stdcan_d;
+
 	/*************************/
 
 	Aircylinder Air1,Air2,Air3,Air4,Air5,Air6,Air7,Air8;
@@ -44,7 +43,7 @@ public:
 			M5(&stdcan_d,5),M6(&stdcan_d,6),M7(&stdcan_d,7),M8(&stdcan_d,8),Air1(&extcan_d,1),Air2(&extcan_d,2),Air3(&extcan_d,3)
 	,Air4(&extcan_d,4),Air5(&extcan_d,5),Air6(&extcan_d,6),Air7(&extcan_d,7),Air8(&extcan_d,8),servo1(&extcan_d,1),servo2(&extcan_d,2)
 	,servo3(&extcan_d,3),servo4(&extcan_d,4),servo5(&extcan_d,5),servo6(&extcan_d,6),servo7(&extcan_d,7),servo8(&extcan_d,8)
-	,loca(&extcan_d,&extcan_r),encoder1(&extcan_r,1),encoder2(&extcan_r,2),encoder3(&extcan_r,3),encoder4(&extcan_r,4)
+	,loca(&extcan_d,&extcan_r),encoder1(&extcan_r,1),encoder2(&extcan_r,2),encoder3(&extcan_r,3),encoder4(&extcan_r,4),PS3(&extcan_r)
 
 	{
 
