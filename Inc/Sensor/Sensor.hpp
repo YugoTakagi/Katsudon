@@ -11,13 +11,16 @@
 class Sensor
 {
 	CanBus *canbus;
+	unsigned short sensordata[12]={0,};
+	int num;
 public:
-	Sensor(CanBus *_canbus):canbus(_canbus)
+	Sensor(CanBus *_canbus,int _num):canbus(_canbus),num(_num)
 	{
 
 	}
 	void SendRequest();
-	void GetValue();
+	void SetData();
+	unsigned short GetValue();
 
 };
 
