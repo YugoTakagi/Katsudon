@@ -2,7 +2,7 @@
  * CAN.cpp
  *
  *  Created on: 2018/12/28
- *      Author: —T‘¿
+ *      Author: ï¿½Tï¿½ï¿½
  */
 #include "CAN.hpp"
 #include "can.h"
@@ -13,22 +13,22 @@ CAN_RxHeaderTypeDef RXmsg;
 bool CanRxFlag=false;
 void FilterConfig()
 {
-	CAN_FilterTypeDef  sFilterConfig;
+	CAN_FilterTypeDef sFilterConfig;
 	sFilterConfig.FilterIdHigh=0x0000;
 	sFilterConfig.FilterIdLow=0x0000;
 	sFilterConfig.FilterMaskIdHigh=0x0000;
-	sFilterConfig.FilterMaskIdLow=0x0000;//extid‚Ìƒf[ƒ^ƒtƒŒ[ƒ€‚¾‚¯ŽóM
-	sFilterConfig.FilterFIFOAssignment=CAN_FILTER_FIFO0;//ŽóMƒtƒBƒ‹ƒ^‚ðFIFO0‚ÉÝ’è
-	sFilterConfig.FilterBank=0; //ƒtƒBƒ‹ƒ^ƒoƒ“ƒN”Ô†‚ðÝ 0-13
-	sFilterConfig.FilterScale=CAN_FILTERSCALE_32BIT; //ƒtƒBƒ‹ƒ^ƒXƒP[ƒ‹ExtId‚Ü‚Å
-	sFilterConfig.FilterMode=CAN_FILTERMODE_IDMASK; //ƒ}ƒXƒNƒ‚[ƒh
-	sFilterConfig.FilterActivation=ENABLE; //ƒtƒBƒ‹ƒ^—LŒø
+	sFilterConfig.FilterMaskIdLow=0x0000;//extidï¿½Ìƒfï¿½[ï¿½^ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½M
+	sFilterConfig.FilterFIFOAssignment=CAN_FILTER_FIFO0;//ï¿½ï¿½ï¿½Mï¿½tï¿½Bï¿½ï¿½ï¿½^ï¿½ï¿½FIFO0ï¿½ÉÝ’ï¿½
+	sFilterConfig.FilterBank=0;//ï¿½tï¿½Bï¿½ï¿½ï¿½^ï¿½oï¿½ï¿½ï¿½Nï¿½Ôï¿½ï¿½ï¿½ï¿½ï¿½ 0-13
+	sFilterConfig.FilterScale=CAN_FILTERSCALE_32BIT; //ï¿½tï¿½Bï¿½ï¿½ï¿½^ï¿½Xï¿½Pï¿½[ï¿½ï¿½ExtIdï¿½Ü‚ï¿½
+	sFilterConfig.FilterMode=CAN_FILTERMODE_IDMASK; //ï¿½}ï¿½Xï¿½Nï¿½ï¿½ï¿½[ï¿½h
+	sFilterConfig.FilterActivation=ENABLE; //ï¿½tï¿½Bï¿½ï¿½ï¿½^ï¿½Lï¿½ï¿½
 //	sFilterConfig.SlaveStartFilterBank=14;
 
 	if(HAL_CAN_ConfigFilter(&hcan, &sFilterConfig)!=HAL_OK)
-		{
-			printf("filter config error!");
-		}
+	{
+		printf("filter config error!");
+	}
 	HAL_CAN_Start(&hcan);
 	HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
 }
@@ -47,87 +47,83 @@ short CanBus::Send(unsigned long ID,unsigned char DLC,unsigned char *data)
 	Txmsg.StdId=ID;
 	Txmsg.IDE=this->IDE;
 	Txmsg.RTR=this->RTR;
-	while(Txok==false)
+	while(Txok == false)
+	{
+		if((hcan.Instance->TSR>>26&0x1)==1)//TME0 is Empty
+		{
+			HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0);
+			if(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0)!=HAL_OK)
 			{
-				if((hcan.Instance->TSR>>26&0x1)==1)//TME0 is Empty
-								{
-									HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0);
-									if(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0)!=HAL_OK)
-									{
-										error_flag=true;
-										error_code=hcan.Instance->ESR>>4&0b111;
-										return -1;
-									}
-									else
-									{
-										Txok=true;
-										error_flag=false;
-									}
-
-								}
-				else if((hcan.Instance->TSR>>27&0x1)==1)//TME1 is empty
-								{
-									HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1);
-									if(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1)!=HAL_OK)
-									{
-										error_flag=true;
-										error_code=hcan.Instance->ESR>>4&0b111;
-										return -1;
-									}
-									else
-									{
-										Txok=true;
-										error_flag=false;
-									}
-
-								}
-				else if((hcan.Instance->TSR>>28&0x1)==1)//TME2 is empty
-								{
-									HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2);
-									if(	HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2)!=HAL_OK)
-									{
-										error_flag=true;
-										error_code=hcan.Instance->ESR>>4&0b111;
-										return -1;
-									}
-									else
-									{
-										Txok=true;
-										error_flag=false;
-									}
-
-								}
-
-								if(error_flag)
-								{
-									switch(error_code)
-									{
-									case 1:
-										printf("staff error\n\r");
-										break;
-									case 2:
-										printf("form error\n\r");
-										break;
-									case 3:
-										printf("ACK error\n\r");
-										break;
-									case 4:
-										printf("bit recessive error\n\r");
-										break;
-									case 5:
-										printf("bit dominant error\n\r");
-										break;
-									case 6:
-										printf("CRC error\n\r");
-										break;
-									}
-								}
-								else if(Txok)
-								{
-									Txok=false;
-									HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_4);
-									return 0;
-								}
+				error_flag=true;
+				error_code=hcan.Instance->ESR>>4&0b111;
+				return -1;
 			}
-}
-
+			else
+			{
+				Txok=true;
+				error_flag=false;
+			}
+		}//end: if
+		else if((hcan.Instance->TSR>>27&0x1)==1)//TME1 is empty
+		{
+			HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1);
+			if(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1)!=HAL_OK)
+			{
+				error_flag=true;
+				error_code=hcan.Instance->ESR>>4&0b111;
+				return -1;
+			}
+			else
+			{
+				Txok=true;
+				error_flag=false;
+			}
+		}//end: else if
+		else if((hcan.Instance->TSR>>28&0x1)==1)//TME2 is empty
+		{
+			HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2);
+			if(	HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2)!=HAL_OK)
+			{
+				error_flag=true;
+				error_code=hcan.Instance->ESR>>4&0b111;
+				return -1;
+			}
+			else
+			{
+				Txok=true;
+				error_flag=false;
+			}
+		}//end: else if
+		/*----- * ----- * ----- * ----- * ----- * ----- * ----- * ----- * ----- * ----- */
+		if(error_flag)//Error checker
+		{
+			switch(error_code)
+			{
+			case 1:
+				printf("staff error\n\r");
+				break;
+			case 2:
+				printf("form error\n\r");
+				break;
+			case 3:
+				printf("ACK error\n\r");
+				break;
+			case 4:
+				printf("bit recessive error\n\r");
+				break;
+			case 5:
+				printf("bit dominant error\n\r");
+				break;
+			case 6:
+				printf("CRC error\n\r");
+				break;
+			}
+		}
+		else if(Txok)
+		{
+			Txok=false;
+			HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_4);
+			return 0;
+		}
+	}//end: while
+}//end: short CanBus::Send
