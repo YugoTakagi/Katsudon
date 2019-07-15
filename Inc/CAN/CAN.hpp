@@ -2,7 +2,7 @@
  * CAN.hpp
  *
  *  Created on: 2018/12/28
- *      Author: —T‘¿
+ *      Author: ï¿½Tï¿½ï¿½
  */
 
 #ifndef CAN_CAN_HPP_
@@ -26,8 +26,5 @@ public:
 	}
 	 short Send(unsigned long ID,unsigned char DLC,unsigned char *data);
 };
-
-
-
 
 #endif /* CAN_CAN_HPP_ */
