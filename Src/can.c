@@ -29,7 +29,6 @@ CAN_HandleTypeDef hcan;
 /* CAN init function */
 void MX_CAN_Init(void)
 {
-
   hcan.Instance = CAN;
   hcan.Init.Prescaler = 4;
   hcan.Init.Mode = CAN_MODE_NORMAL;

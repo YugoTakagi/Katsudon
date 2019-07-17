@@ -45,55 +45,25 @@ short CanBus::Send(unsigned long ID,unsigned char DLC,unsigned char *data)
 	Txmsg.DLC=DLC;
 	Txmsg.ExtId=ID;
 	Txmsg.StdId=ID;
-	Txmsg.IDE=this->IDE;
-	Txmsg.RTR=this->RTR;
+	Txmsg.IDE=this->IDE;//CanBasのinstansを作るときにinitしてる.
+	Txmsg.RTR=this->RTR;//CanBasのinstansを作るときにinitしてる.
 	while(Txok == false)
 	{
-		if((hcan.Instance->TSR>>26&0x1)==1)//TME0 is Empty
+		if((hcan.Instance->TSR>>26&0x1)==1)//TME0 is empty
 		{
 			HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0);
-			if(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0)!=HAL_OK)
-			{
-				error_flag=true;
-				error_code=hcan.Instance->ESR>>4&0b111;
-				return -1;
-			}
-			else
-			{
-				Txok=true;
-				error_flag=false;
-			}
-		}//end: if
+			this->Error_check_to_Send(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX0));
+		}//end: if.
 		else if((hcan.Instance->TSR>>27&0x1)==1)//TME1 is empty
 		{
 			HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1);
-			if(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1)!=HAL_OK)
-			{
-				error_flag=true;
-				error_code=hcan.Instance->ESR>>4&0b111;
-				return -1;
-			}
-			else
-			{
-				Txok=true;
-				error_flag=false;
-			}
-		}//end: else if
+			this->Error_check_to_Send(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX1));
+		}//end: else if.
 		else if((hcan.Instance->TSR>>28&0x1)==1)//TME2 is empty
 		{
 			HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2);
-			if(	HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2)!=HAL_OK)
-			{
-				error_flag=true;
-				error_code=hcan.Instance->ESR>>4&0b111;
-				return -1;
-			}
-			else
-			{
-				Txok=true;
-				error_flag=false;
-			}
-		}//end: else if
+			this->Error_check_to_Send(HAL_CAN_AddTxMessage(&hcan,&Txmsg,data,(uint32_t*)CAN_TX_MAILBOX2));
+		}//end: else if.
 		/*----- * ----- * ----- * ----- * ----- * ----- * ----- * ----- * ----- * ----- */
 		if(error_flag)//Error checker
 		{
@@ -125,5 +95,19 @@ short CanBus::Send(unsigned long ID,unsigned char DLC,unsigned char *data)
 			HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_4);
 			return 0;
 		}
-	}//end: while
-}//end: short CanBus::Send
+	}//end: while.
+}//end: short CanBus::Send.
+
+void CanBus::Error_check_to_Send(int checker){
+	if(checker!=HAL_OK)
+	{
+		error_flag=true;
+		error_code=hcan.Instance->ESR>>4&0b111;
+		return -1;
+	}
+	else
+	{
+		Txok=true;
+		error_flag=false;
+	}
+}//end: void CanBus::Error_check_to_Send.
